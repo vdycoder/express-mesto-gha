@@ -4,6 +4,7 @@ const userRoutes = require('./routes/users');
 const cardRoutes = require('./routes/cards');
 
 const { PORT = 3000 } = process.env;
+const ERROR_CODE_404 = 404;
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
@@ -22,6 +23,11 @@ app.use((req, res, next) => {
 
 app.use('/users', userRoutes);
 app.use('/cards', cardRoutes);
+app.use('*', (req, res) => {
+  res.status(ERROR_CODE_404).json({
+    message: 'Несуществующий путь.',
+  });
+});
 
 app.listen(PORT, () => {
   console.log(`App running & listening on port ${PORT}`);

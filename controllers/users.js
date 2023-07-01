@@ -31,9 +31,16 @@ const getUserById = (req, res) => {
         res.status(STATUS_OK).send(user);
       }
     })
-    .catch(() => {
-      res.status(ERROR_CODE_500)
-        .send({ message: 'Ошибка по умолчанию.' });
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(ERROR_CODE_400).send({
+          message: 'Переданы некорректные данные _id пользователя.',
+        });
+      } else {
+        res.status(ERROR_CODE_500).send({
+          message: 'Ошибка по умолчанию.',
+        });
+      }
     });
 };
 

@@ -2,7 +2,6 @@ const Card = require('../models/card');
 
 const STATUS_OK = 200;
 const STATUS_CREATED = 201;
-const STATUS_DELETED = 204;
 const ERROR_CODE_400 = 400;
 const ERROR_CODE_404 = 404;
 const ERROR_CODE_500 = 500;
@@ -49,7 +48,7 @@ const deleteCardById = (req, res) => {
         });
       } else {
         Card.findByIdAndRemove(cardId)
-          .then((deletedCard) => res.status(STATUS_DELETED).send(deletedCard))
+          .then((deletedCard) => res.status(STATUS_OK).send(deletedCard))
           .catch(() => {
             res.status(ERROR_CODE_500).send({
               message: 'Ошибка по умолчанию.',
@@ -121,7 +120,7 @@ const dislikeCardById = (req, res) => {
           { $pull: { likes: req.user._id } },
           { new: true },
         )
-          .then((updatedCard) => res.status(STATUS_DELETED).send(updatedCard))
+          .then((updatedCard) => res.status(STATUS_OK).send(updatedCard))
           .catch(() => {
             res.status(ERROR_CODE_500).send({
               message: 'Ошибка по умолчанию.',
