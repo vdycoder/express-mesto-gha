@@ -1,14 +1,15 @@
-const Card = require('../models/card');
+const {
+  STATUS_CREATED,
+  ERROR_CODE_400,
+  ERROR_CODE_404,
+  ERROR_CODE_500,
+} = require('../utils/status-codes');
 
-const STATUS_OK = 200;
-const STATUS_CREATED = 201;
-const ERROR_CODE_400 = 400;
-const ERROR_CODE_404 = 404;
-const ERROR_CODE_500 = 500;
+const Card = require('../models/card');
 
 const getCards = (req, res) => {
   Card.find({})
-    .then((cards) => res.status(STATUS_OK).send(cards))
+    .then((cards) => res.send(cards))
     .catch(() => {
       res.status(ERROR_CODE_500).send({
         message: 'Ошибка по умолчанию.',
@@ -48,7 +49,7 @@ const deleteCardById = (req, res) => {
         });
       } else {
         Card.findByIdAndRemove(cardId)
-          .then((deletedCard) => res.status(STATUS_OK).send(deletedCard))
+          .then((deletedCard) => res.send(deletedCard))
           .catch(() => {
             res.status(ERROR_CODE_500).send({
               message: 'Ошибка по умолчанию.',
@@ -72,24 +73,18 @@ const deleteCardById = (req, res) => {
 const likeCardById = (req, res) => {
   const { cardId } = req.params;
 
-  Card.findById(cardId)
+  Card.findByIdAndUpdate(
+    cardId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true },
+  )
     .then((card) => {
       if (!card) {
         res.status(ERROR_CODE_404).send({
           message: `Передан несуществующий _id:${cardId} карточки.`,
         });
       } else {
-        Card.findByIdAndUpdate(
-          req.params.cardId,
-          { $addToSet: { likes: req.user._id } },
-          { new: true },
-        )
-          .then((updatedCard) => res.status(STATUS_OK).send(updatedCard))
-          .catch(() => {
-            res.status(ERROR_CODE_500).send({
-              message: 'Ошибка по умолчанию.',
-            });
-          });
+        res.send(card);
       }
     })
     .catch((err) => {
@@ -108,24 +103,18 @@ const likeCardById = (req, res) => {
 const dislikeCardById = (req, res) => {
   const { cardId } = req.params;
 
-  Card.findById(cardId)
+  Card.findByIdAndUpdate(
+    cardId,
+    { $pull: { likes: req.user._id } },
+    { new: true },
+  )
     .then((card) => {
       if (!card) {
         res.status(ERROR_CODE_404).send({
           message: `Передан несуществующий _id:${cardId} карточки.`,
         });
       } else {
-        Card.findByIdAndUpdate(
-          req.params.cardId,
-          { $pull: { likes: req.user._id } },
-          { new: true },
-        )
-          .then((updatedCard) => res.status(STATUS_OK).send(updatedCard))
-          .catch(() => {
-            res.status(ERROR_CODE_500).send({
-              message: 'Ошибка по умолчанию.',
-            });
-          });
+        res.send(card);
       }
     })
     .catch((err) => {

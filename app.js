@@ -2,9 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const userRoutes = require('./routes/users');
 const cardRoutes = require('./routes/cards');
+const { ERROR_CODE_404 } = require('./utils/status-codes');
 
 const { PORT = 3000 } = process.env;
-const ERROR_CODE_404 = 404;
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,

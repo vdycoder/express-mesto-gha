@@ -1,15 +1,16 @@
-const User = require('../models/user');
+const {
+  STATUS_CREATED,
+  ERROR_CODE_400,
+  ERROR_CODE_404,
+  ERROR_CODE_500,
+} = require('../utils/status-codes');
 
-const STATUS_OK = 200;
-const STATUS_CREATED = 201;
-const ERROR_CODE_400 = 400;
-const ERROR_CODE_404 = 404;
-const ERROR_CODE_500 = 500;
+const User = require('../models/user');
 
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => {
-      res.status(STATUS_OK).send(users);
+      res.send(users);
     })
     .catch(() => {
       res.status(ERROR_CODE_500)
@@ -28,7 +29,7 @@ const getUserById = (req, res) => {
             message: `Пользователь по указанному _id:${userId} не найден.`,
           });
       } else {
-        res.status(STATUS_OK).send(user);
+        res.send(user);
       }
     })
     .catch((err) => {
@@ -80,7 +81,7 @@ const updateUserById = (req, res) => {
           message: `Пользователь с указанным _id:${userId} не найден.`,
         });
       } else {
-        res.status(STATUS_OK).send(user);
+        res.send(user);
       }
     })
     .catch((err) => {
@@ -111,7 +112,7 @@ const updateAvatarById = (req, res) => {
           message: `Пользователь с указанным _id:${userId} не найден.`,
         });
       } else {
-        res.status(STATUS_OK).send(user);
+        res.send(user);
       }
     })
     .catch((err) => {
