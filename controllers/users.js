@@ -49,28 +49,9 @@ const getUserById = (req, res, next) => {
     });
 };
 
-const getUserMe = (req, res, next) => {
+const getUserMe = (req, res) => {
   const userId = req.user._id;
-
-  User.findById(userId)
-    .then((user) => {
-      if (!user) {
-        next(new NotFoundError(
-          `Пользователь по указанному _id:${userId} не найден.`,
-        ));
-      } else {
-        res.send(user);
-      }
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestError(
-          'Переданы некорректные данные _id пользователя.',
-        ));
-      } else {
-        next(err);
-      }
-    });
+  User.findById(userId).then((user) => res.send(user));
 };
 
 const createUser = (req, res, next) => {
